@@ -8,16 +8,32 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CourseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final int LECTURE = 0, WEEK = 1;
 
-    private List<Object> mWeekLectures;
+    private List<Object> mWeekLectures = new ArrayList<>();
+    private List<Lecture> mLectures;
 
-    public CourseAdapter(List<Object> weekLectures) {
-        mWeekLectures = weekLectures;
+    public CourseAdapter(List<Lecture> lectures) {
+        mLectures = lectures;
+        generateWeekLectures();
+    }
+
+    private void generateWeekLectures() {
+        int weekCount = 1;
+        for (int i = 0; i < mLectures.size(); i++) {
+            if (!(i % 3 == 0)) {
+                mWeekLectures.add(mLectures.get(i));
+            } else {
+                mWeekLectures.add("Week" + weekCount);
+                mWeekLectures.add(mLectures.get(i));
+                weekCount++;
+            }
+        }
     }
 
     @NonNull
@@ -54,11 +70,14 @@ public class CourseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             case WEEK:
                 String week = (String) currentItem;
                 ((WeekHolder) holder).bindWeek(week);
+                default:
+                    break;
         }
     }
 
     @Override
     public int getItemViewType(int position) {
+
         if (mWeekLectures.get(position) instanceof Lecture) {
             return LECTURE;
         } else if (mWeekLectures.get(position) instanceof String) {

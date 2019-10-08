@@ -13,14 +13,14 @@ public class MainActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
     private CourseListProvider mProvider = new CourseListProvider();
-    private List<Object> mWeekLectures;
+    private List<Lecture> mLectures;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mWeekLectures = mProvider.provideWeekLectures();
+        mLectures = mProvider.provideLectures();
         initRecyclerView();
     }
 
@@ -29,6 +29,6 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
         mRecyclerView.addItemDecoration(dividerItemDecoration);
-        mRecyclerView.setAdapter(new CourseAdapter(mWeekLectures));
+        mRecyclerView.setAdapter(new CourseAdapter(mLectures));
     }
 }

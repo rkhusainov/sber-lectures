@@ -14,24 +14,36 @@ import java.util.List;
 public class CourseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final int LECTURE = 0, WEEK = 1;
+    private static final int NON_GROUP = 0, GROUP = 1;
 
     private List<Object> mWeekLectures = new ArrayList<>();
     private List<Lecture> mLectures;
+    private int mGroupStatus=0;
 
-    public CourseAdapter(List<Lecture> lectures) {
+    public void setLectures(List<Lecture> lectures) {
         mLectures = lectures;
         generateWeekLectures();
+        notifyDataSetChanged();
+    }
+
+    public void setGroupStatus(int status) {
+        mGroupStatus = status;
     }
 
     private void generateWeekLectures() {
-        int weekCount = 1;
-        for (int i = 0; i < mLectures.size(); i++) {
-            if (!(i % 3 == 0)) {
-                mWeekLectures.add(mLectures.get(i));
-            } else {
-                mWeekLectures.add("Week" + weekCount);
-                mWeekLectures.add(mLectures.get(i));
-                weekCount++;
+        if (mGroupStatus == NON_GROUP) {
+            mWeekLectures = new ArrayList<Object>(mLectures);
+        } else {
+            mWeekLectures.clear();
+            int weekCount = 1;
+            for (int i = 0; i < mLectures.size(); i++) {
+                if (!(i % 3 == 0)) {
+                    mWeekLectures.add(mLectures.get(i));
+                } else {
+                    mWeekLectures.add("Week " + weekCount);
+                    mWeekLectures.add(mLectures.get(i));
+                    weekCount++;
+                }
             }
         }
     }
@@ -70,8 +82,8 @@ public class CourseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             case WEEK:
                 String week = (String) currentItem;
                 ((WeekHolder) holder).bindWeek(week);
-                default:
-                    break;
+            default:
+                break;
         }
     }
 

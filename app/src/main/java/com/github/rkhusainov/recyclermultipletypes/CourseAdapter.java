@@ -22,11 +22,11 @@ public class CourseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private int mGroupStatus = 0;
     private Resources mResources;
 
-    public CourseAdapter(Resources resources) {
+    public CourseAdapter(@NonNull Resources resources) {
         mResources = resources;
     }
 
-    public void setLectures(List<Lecture> lectures) {
+    public void setLectures(@NonNull List<Lecture> lectures) {
         generateLectures(lectures);
         notifyDataSetChanged();
     }
@@ -149,7 +149,7 @@ public class CourseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             mWeek = itemView.findViewById(R.id.week_name);
         }
 
-        private void bindWeek(String currentWeek) {
+        private void bindWeek(@NonNull String currentWeek) {
             mWeek.setText(currentWeek);
         }
     }

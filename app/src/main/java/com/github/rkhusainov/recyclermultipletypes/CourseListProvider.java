@@ -1,5 +1,7 @@
 package com.github.rkhusainov.recyclermultipletypes;
 
+import androidx.annotation.NonNull;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -61,7 +63,7 @@ public class CourseListProvider {
         return new ArrayList<>(lectorSet);
     }
 
-    public List<Lecture> lectureFilterBy(String lectorName) {
+    public List<Lecture> lectureFilterBy(@NonNull String lectorName) {
         List<Lecture> result = new ArrayList<>();
         for (Lecture lecture : mLectures) {
             if (lecture.getLector().equals(lectorName)) {
@@ -71,7 +73,7 @@ public class CourseListProvider {
         return new ArrayList<>(result);
     }
 
-    public Lecture getLectureByDate(Date date) {
+    public Lecture getLectureByDate(@NonNull Date date) {
         SimpleDateFormat format = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
         for (Lecture lecture : mLectures) {
             try {

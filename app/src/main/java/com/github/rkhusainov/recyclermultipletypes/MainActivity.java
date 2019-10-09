@@ -13,6 +13,7 @@ import android.widget.Spinner;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -20,8 +21,7 @@ public class MainActivity extends AppCompatActivity {
     public static final int POSITION_ALL = 0;
     private static final int NON_GROUP = 0, GROUP = 1;
 
-    private RecyclerView mRecyclerView;
-    private CourseAdapter mCourseAdapter = new CourseAdapter();
+    private CourseAdapter mCourseAdapter;
     private CourseListProvider mProvider = new CourseListProvider();
     private List<Lecture> mLectures = new ArrayList<>();
     private List<String> mLectors;
@@ -34,23 +34,34 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         getLectors();
-        initRecyclerView();
+        initRecyclerView(savedInstanceState == null);
         initSpinner();
     }
 
     private void getLectors() {
-
         mLectors = mProvider.provideLectors();
         Collections.sort(mLectors);
         mLectors.add(POSITION_ALL, getResources().getString(R.string.all));
     }
 
-    private void initRecyclerView() {
-        mRecyclerView = findViewById(R.id.recycler);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
+    private void initRecyclerView(boolean isFirstCreate) {
+        RecyclerView recyclerView = findViewById(R.id.recycler);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+        mCourseAdapter = new CourseAdapter(getResources());
+        mCourseAdapter.setLectures(mProvider.provideLectures());
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
-        mRecyclerView.addItemDecoration(dividerItemDecoration);
-        mRecyclerView.setAdapter(mCourseAdapter);
+        recyclerView.addItemDecoration(dividerItemDecoration);
+        recyclerView.setAdapter(mCourseAdapter);
+
+        if (isFirstCreate) {
+            Date date = new Date();
+            Lecture nextLecture = mProvider.getLectureByDate(date);
+            int nextLecturePosition = mCourseAdapter.getLecturePosition(nextLecture);
+            if (nextLecturePosition != -1) {
+                recyclerView.scrollToPosition(nextLecturePosition);
+            }
+        }
     }
 
     private void initSpinner() {

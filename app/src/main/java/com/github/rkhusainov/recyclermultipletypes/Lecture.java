@@ -3,12 +3,12 @@ package com.github.rkhusainov.recyclermultipletypes;
 import androidx.annotation.NonNull;
 
 public class Lecture {
-    private final String mNumber;
+    private final int mNumber;
     private final String mDate;
     private final String mTheme;
     private final String mLector;
 
-    public Lecture(@NonNull String number,
+    public Lecture(@NonNull int number,
                    @NonNull String date,
                    @NonNull String theme,
                    @NonNull String lector
@@ -19,7 +19,7 @@ public class Lecture {
         mLector = lector;
     }
 
-    public String getNumber() {
+    public int getNumber() {
         return mNumber;
     }
 

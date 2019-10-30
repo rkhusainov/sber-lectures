@@ -1,6 +1,8 @@
-package com.github.rkhusainov.recyclermultipletypes;
+package com.github.rkhusainov.recyclermultipletypes.ui;
 
 import androidx.annotation.NonNull;
+
+import com.github.rkhusainov.recyclermultipletypes.model.Lecture;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

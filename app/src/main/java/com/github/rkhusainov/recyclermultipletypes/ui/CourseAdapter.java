@@ -1,4 +1,4 @@
-package com.github.rkhusainov.recyclermultipletypes;
+package com.github.rkhusainov.recyclermultipletypes.ui;
 
 import android.content.res.Resources;
 import android.view.LayoutInflater;
@@ -8,6 +8,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.github.rkhusainov.recyclermultipletypes.R;
+import com.github.rkhusainov.recyclermultipletypes.model.Lecture;
 
 import java.util.ArrayList;
 import java.util.List;

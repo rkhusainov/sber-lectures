@@ -28,7 +28,8 @@
         android:textSize="20sp"
         android:layout_marginBottom="@dimen/default_margin"
         android:layout_toEndOf="@id/number"
-        tools:text="Theme of lecture" />
+        tools:text="Theme of lecture"
+        android:textColor="@color/colorOrange"/>
 
     <TextView
         android:id="@+id/lector"

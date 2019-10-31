@@ -9,7 +9,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorBlue"
+        android:background="@color/colorYellow"
         android:orientation="horizontal">
 
         <Spinner
@@ -39,8 +39,8 @@
         android:id="@+id/loading_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:background="@android:color/white">
+        android:background="@android:color/white"
+        android:visibility="gone">
 
         <ProgressBar
             android:layout_width="wrap_content"

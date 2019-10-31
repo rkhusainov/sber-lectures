@@ -25,8 +25,11 @@ public class CourseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private int mGroupStatus = 0;
     private Resources mResources;
 
-    public CourseAdapter(@NonNull Resources resources) {
+    private OnItemClickListener mOnItemClickListener;
+
+    public CourseAdapter(@NonNull Resources resources, OnItemClickListener listener) {
         mResources = resources;
+        mOnItemClickListener = listener;
     }
 
     public void setLectures(@NonNull List<Lecture> lectures) {
@@ -102,7 +105,7 @@ public class CourseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         switch (holder.getItemViewType()) {
             case LECTURE:
                 Lecture lecture = (Lecture) currentItem;
-                ((LectureHolder) holder).bindLecture(lecture);
+                ((LectureHolder) holder).bindLecture(lecture, mOnItemClickListener);
                 break;
             case WEEK:
                 String week = (String) currentItem;
@@ -134,11 +137,18 @@ public class CourseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             mLecture = itemView.findViewById(R.id.lector);
         }
 
-        private void bindLecture(Lecture currentLecture) {
+        private void bindLecture(final Lecture currentLecture, final OnItemClickListener listener) {
             mNumber.setText(String.valueOf(currentLecture.getNumber()));
             mDate.setText(currentLecture.getDate());
             mTheme.setText(currentLecture.getTheme());
             mLecture.setText(currentLecture.getLector());
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onItemClick(currentLecture);
+                }
+            });
         }
     }
 

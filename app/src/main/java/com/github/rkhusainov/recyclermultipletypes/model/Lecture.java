@@ -5,10 +5,11 @@ import androidx.annotation.NonNull;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Lecture {
+public class Lecture implements Serializable {
     private final int mNumber;
     private final String mDate;
     private final String mTheme;

@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,7 +26,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-public class CourseListFragment extends Fragment {
+public class CourseListFragment extends Fragment implements OnItemClickListener{
 
     public static final int POSITION_ALL = 0;
     private static final int NON_GROUP = 0, GROUP = 1;
@@ -85,7 +86,7 @@ public class CourseListFragment extends Fragment {
      private void initRecyclerView(boolean isFirstCreate, @NonNull List<Lecture> lectures) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
-        mCourseAdapter = new CourseAdapter(getResources());
+        mCourseAdapter = new CourseAdapter(getResources(), this);
         mCourseAdapter.setLectures(lectures);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
         mRecyclerView.addItemDecoration(dividerItemDecoration);
@@ -111,7 +112,6 @@ public class CourseListFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
                 mLectorPosition = position;
-
                 setGroupStatus();
                 setLectures(mLectorPosition);
             }
@@ -159,6 +159,15 @@ public class CourseListFragment extends Fragment {
             mLectures = mCourseListProvider.lectureFilterBy(mLectors.get(mLectorPosition));
         }
         mCourseAdapter.setLectures(mLectures);
+    }
+
+    @Override
+    public void onItemClick(Lecture lecture) {
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, DetailFragment.newInstance(lecture))
+                .addToBackStack(null)
+                .commit();
     }
 
     private static class LoadLecturesTask extends AsyncTask<Void, Void, List<Lecture>> {

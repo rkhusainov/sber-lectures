@@ -2,21 +2,31 @@ package com.github.rkhusainov.recyclermultipletypes.model;
 
 import androidx.annotation.NonNull;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Lecture {
     private final int mNumber;
     private final String mDate;
     private final String mTheme;
     private final String mLector;
+    private final List<String> mSubtopics;
 
-    public Lecture(@NonNull int number,
-                   @NonNull String date,
-                   @NonNull String theme,
-                   @NonNull String lector
-    ) {
+    @JsonCreator
+    public Lecture(
+            @JsonProperty("number") int number,
+            @JsonProperty("date") @NonNull String date,
+            @JsonProperty("theme") @NonNull String theme,
+            @JsonProperty("lector") @NonNull String lector,
+            @JsonProperty("subtopics") @NonNull List<String> subtopics) {
         mNumber = number;
         mDate = date;
         mTheme = theme;
         mLector = lector;
+        mSubtopics = new ArrayList<>(subtopics);
     }
 
     public int getNumber() {
@@ -33,5 +43,9 @@ public class Lecture {
 
     public String getLector() {
         return mLector;
+    }
+
+    public List<String> getSubtopics() {
+        return mSubtopics;
     }
 }

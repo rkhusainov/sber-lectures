@@ -53,5 +53,4 @@ public class LectorSpinnerAdapter extends BaseAdapter {
             mLectorName = view.findViewById(android.R.id.text1);
         }
     }
-
 }

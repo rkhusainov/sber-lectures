@@ -1,5 +1,6 @@
 package com.github.rkhusainov.recyclermultipletypes.ui;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.rkhusainov.recyclermultipletypes.R;
 import com.github.rkhusainov.recyclermultipletypes.model.Lecture;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -29,14 +31,25 @@ public class CourseListFragment extends Fragment {
     private static final int NON_GROUP = 0, GROUP = 1;
 
     private CourseAdapter mCourseAdapter;
-    private CourseListProvider mProvider = new CourseListProvider();
+    private RecyclerView mRecyclerView;
+    private Spinner mLectorSpinner;
+    private Spinner mWeekSpinner;
+    private CourseListProvider mCourseListProvider = new CourseListProvider();
     private List<Lecture> mLectures = new ArrayList<>();
     private List<String> mLectors;
     private int mLectorPosition;
     private int mWeekGroupStatus;
 
+    private LoadLecturesTask mLoadLecturesTask;
+    private View mLoadingView;
+
     public static CourseListFragment newInstance() {
         return new CourseListFragment();
+    }
+
+    {
+        // нужно для того, чтобы инстанс LecturesProvider не убивался после смены конфигурации
+        setRetainInstance(true);
     }
 
     @Nullable
@@ -49,43 +62,52 @@ public class CourseListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        getLectors();
-        initRecyclerView(view, savedInstanceState == null);
-        initSpinner(view);
-
+        mLoadingView = view.findViewById(R.id.loading_view);
+        mRecyclerView = view.findViewById(R.id.recycler);
+        mLectorSpinner = view.findViewById(R.id.lectors_spinner);
+        mWeekSpinner = view.findViewById(R.id.week_group_spinner);
     }
 
-    private void getLectors() {
-        mLectors = mProvider.provideLectors();
-        Collections.sort(mLectors);
-        mLectors.add(POSITION_ALL, getResources().getString(R.string.all));
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        List<Lecture> lectures = mCourseListProvider.getLectures();
+        if (lectures == null) {
+            mLoadLecturesTask = new LoadLecturesTask(this, savedInstanceState == null);
+            mLoadLecturesTask.execute();
+        } else {
+            initRecyclerView(savedInstanceState == null, lectures);
+            initLectorsSpinner();
+            initWeekSpinner();
+        }
     }
 
-    private void initRecyclerView(View view, boolean isFirstCreate) {
-        RecyclerView recyclerView = view.findViewById(R.id.recycler);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
-        recyclerView.setLayoutManager(layoutManager);
+     private void initRecyclerView(boolean isFirstCreate, @NonNull List<Lecture> lectures) {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false);
+        mRecyclerView.setLayoutManager(layoutManager);
         mCourseAdapter = new CourseAdapter(getResources());
-        mCourseAdapter.setLectures(mProvider.provideLectures());
+        mCourseAdapter.setLectures(lectures);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
-        recyclerView.addItemDecoration(dividerItemDecoration);
-        recyclerView.setAdapter(mCourseAdapter);
+        mRecyclerView.addItemDecoration(dividerItemDecoration);
+        mRecyclerView.setAdapter(mCourseAdapter);
 
         if (isFirstCreate) {
             Date date = new Date();
-            Lecture nextLecture = mProvider.getLectureByDate(date);
+            Lecture nextLecture = mCourseListProvider.getLectureByDate(date);
             int nextLecturePosition = mCourseAdapter.getLecturePosition(nextLecture);
             if (nextLecturePosition != -1) {
-                recyclerView.scrollToPosition(nextLecturePosition);
+                mRecyclerView.scrollToPosition(nextLecturePosition);
             }
         }
     }
 
-    private void initSpinner(View view) {
-        Spinner lectorSpinner = view.findViewById(R.id.lectors_spinner);
-        lectorSpinner.setAdapter(new LectorSpinnerAdapter(mLectors));
+    private void initLectorsSpinner() {
+        mLectors = mCourseListProvider.provideLectors();
+        Collections.sort(mLectors);
+        mLectors.add(POSITION_ALL, getResources().getString(R.string.all));
+        mLectorSpinner.setAdapter(new LectorSpinnerAdapter(mLectors));
 
-        lectorSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mLectorSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
                 mLectorPosition = position;
@@ -99,13 +121,14 @@ public class CourseListFragment extends Fragment {
 
             }
         });
+    }
 
-        Spinner weekSpinner = view.findViewById(R.id.week_group_spinner);
+    private void initWeekSpinner() {
         ArrayAdapter<?> adapter = ArrayAdapter.createFromResource(getContext(), R.array.group_status, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        weekSpinner.setAdapter(adapter);
+        mWeekSpinner.setAdapter(adapter);
 
-        weekSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mWeekSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
                 mWeekGroupStatus = position;
@@ -131,10 +154,51 @@ public class CourseListFragment extends Fragment {
 
     public void setLectures(int lectorPosition) {
         if (lectorPosition == POSITION_ALL) {
-            mLectures = mProvider.provideLectures();
+            mLectures = mCourseListProvider.getLectures();
         } else {
-            mLectures = mProvider.lectureFilterBy(mLectors.get(mLectorPosition));
+            mLectures = mCourseListProvider.lectureFilterBy(mLectors.get(mLectorPosition));
         }
         mCourseAdapter.setLectures(mLectures);
+    }
+
+    private static class LoadLecturesTask extends AsyncTask<Void, Void, List<Lecture>> {
+        private WeakReference<CourseListFragment> mFragmentWeakReference;
+        CourseListProvider mProvider;
+        private final boolean mIsFirstCreate;
+
+        private LoadLecturesTask(@NonNull CourseListFragment fragment, boolean isFirstCreate) {
+            mFragmentWeakReference = new WeakReference<>(fragment);
+            mProvider = fragment.mCourseListProvider;
+            mIsFirstCreate = isFirstCreate;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            CourseListFragment fragment = mFragmentWeakReference.get();
+            if (fragment != null) {
+                fragment.mLoadingView.setVisibility(View.VISIBLE);
+            }
+        }
+
+        @Override
+        protected List<Lecture> doInBackground(Void... voids) {
+            return mProvider.loadLecturesFromWeb();
+        }
+
+        @Override
+        protected void onPostExecute(List<Lecture> lectures) {
+            CourseListFragment fragment = mFragmentWeakReference.get();
+            if (fragment == null) {
+                return;
+            }
+            fragment.mLoadingView.setVisibility(View.GONE);
+            if (lectures == null) {
+
+            } else {
+                fragment.initRecyclerView(mIsFirstCreate,lectures);
+                fragment.initLectorsSpinner();
+                fragment.initWeekSpinner();
+            }
+        }
     }
 }

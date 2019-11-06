@@ -22,7 +22,7 @@ import java.util.Set;
 
 import static com.github.rkhusainov.recyclermultipletypes.BuildConfig.API_URL;
 
-public class CourseListProvider {
+public class LecturesRepository {
 
     public static final String DATE_FORMAT = "dd.MM.yyyy";
 

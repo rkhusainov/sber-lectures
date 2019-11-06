@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.rkhusainov.recyclermultipletypes.R;
-import com.github.rkhusainov.recyclermultipletypes.data.repository.CourseListProvider;
+import com.github.rkhusainov.recyclermultipletypes.data.repository.LecturesRepository;
 import com.github.rkhusainov.recyclermultipletypes.data.model.Lecture;
 import com.github.rkhusainov.recyclermultipletypes.presentation.presenter.CoursePresenter;
 
@@ -34,7 +34,7 @@ public class CourseListFragment extends Fragment implements OnItemClickListener,
     private RecyclerView mRecyclerView;
     private Spinner mLectorSpinner;
     private Spinner mWeekSpinner;
-    private CourseListProvider mCourseListProvider = new CourseListProvider();
+    private LecturesRepository mLecturesRepository = new LecturesRepository();
     private List<Lecture> mLectures = new ArrayList<>();
     private List<String> mLectors;
     private int mLectorPosition;
@@ -72,9 +72,9 @@ public class CourseListFragment extends Fragment implements OnItemClickListener,
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        List<Lecture> lectures = mCourseListProvider.getLectures();
+        List<Lecture> lectures = mLecturesRepository.getLectures();
         if (lectures == null) {
-            mPresenter = new CoursePresenter(mCourseListProvider, this, savedInstanceState == null);
+            mPresenter = new CoursePresenter(mLecturesRepository, this, savedInstanceState == null);
         } else {
             initRecyclerView(savedInstanceState == null, lectures);
             initLectorsSpinner();
@@ -98,7 +98,7 @@ public class CourseListFragment extends Fragment implements OnItemClickListener,
 
         if (isFirstCreate) {
             Date date = new Date();
-            Lecture nextLecture = mCourseListProvider.getLectureByDate(date);
+            Lecture nextLecture = mLecturesRepository.getLectureByDate(date);
             int nextLecturePosition = mCourseAdapter.getLecturePosition(nextLecture);
             if (nextLecturePosition != -1) {
                 mRecyclerView.scrollToPosition(nextLecturePosition);
@@ -107,7 +107,7 @@ public class CourseListFragment extends Fragment implements OnItemClickListener,
     }
 
     private void initLectorsSpinner() {
-        mLectors = mCourseListProvider.provideLectors();
+        mLectors = mLecturesRepository.provideLectors();
         Collections.sort(mLectors);
         mLectors.add(POSITION_ALL, getResources().getString(R.string.all));
         mLectorSpinner.setAdapter(new LectorSpinnerAdapter(mLectors));
@@ -157,9 +157,9 @@ public class CourseListFragment extends Fragment implements OnItemClickListener,
 
     public void setLectures(int lectorPosition) {
         if (lectorPosition == POSITION_ALL) {
-            mLectures = mCourseListProvider.getLectures();
+            mLectures = mLecturesRepository.getLectures();
         } else {
-            mLectures = mCourseListProvider.lectureFilterBy(mLectors.get(mLectorPosition));
+            mLectures = mLecturesRepository.lectureFilterBy(mLectors.get(mLectorPosition));
         }
         mCourseAdapter.setLectures(mLectures);
     }

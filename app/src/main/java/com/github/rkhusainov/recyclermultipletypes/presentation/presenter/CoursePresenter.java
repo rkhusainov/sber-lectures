@@ -2,7 +2,7 @@ package com.github.rkhusainov.recyclermultipletypes.presentation.presenter;
 
 import android.os.AsyncTask;
 
-import com.github.rkhusainov.recyclermultipletypes.data.repository.CourseListProvider;
+import com.github.rkhusainov.recyclermultipletypes.data.repository.LecturesRepository;
 import com.github.rkhusainov.recyclermultipletypes.data.model.Lecture;
 import com.github.rkhusainov.recyclermultipletypes.presentation.view.CourseView;
 
@@ -10,11 +10,11 @@ import java.util.List;
 
 public class CoursePresenter {
 
-    private CourseListProvider mProvider;
+    private LecturesRepository mProvider;
     private CourseView mCourseView;
     private LoadLecturesTask mLecturesTask;
 
-    public CoursePresenter(CourseListProvider provider, CourseView courseView, boolean isFirstCreate) {
+    public CoursePresenter(LecturesRepository provider, CourseView courseView, boolean isFirstCreate) {
         mProvider = provider;
         mCourseView = courseView;
         mLecturesTask = new LoadLecturesTask(mCourseView, mProvider, isFirstCreate);
@@ -23,10 +23,10 @@ public class CoursePresenter {
 
     private static class LoadLecturesTask extends AsyncTask<Void, Void, List<Lecture>> {
         private final boolean mIsFirstCreate;
-        CourseListProvider mProvider;
+        LecturesRepository mProvider;
         private CourseView mCourseView;
 
-        private LoadLecturesTask(CourseView courseView, CourseListProvider provider, boolean isFirstCreate) {
+        private LoadLecturesTask(CourseView courseView, LecturesRepository provider, boolean isFirstCreate) {
             mCourseView = courseView;
             mProvider = provider;
             mIsFirstCreate = isFirstCreate;

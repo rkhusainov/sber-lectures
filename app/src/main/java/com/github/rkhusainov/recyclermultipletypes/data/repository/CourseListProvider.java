@@ -1,10 +1,10 @@
-package com.github.rkhusainov.recyclermultipletypes.ui;
+package com.github.rkhusainov.recyclermultipletypes.data.repository;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.rkhusainov.recyclermultipletypes.model.Lecture;
+import com.github.rkhusainov.recyclermultipletypes.data.model.Lecture;
 
 import java.io.IOException;
 import java.io.InputStream;

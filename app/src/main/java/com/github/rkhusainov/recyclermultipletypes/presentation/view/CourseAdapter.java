@@ -1,4 +1,4 @@
-package com.github.rkhusainov.recyclermultipletypes.ui;
+package com.github.rkhusainov.recyclermultipletypes.presentation.view;
 
 import android.content.res.Resources;
 import android.view.LayoutInflater;
@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.rkhusainov.recyclermultipletypes.R;
-import com.github.rkhusainov.recyclermultipletypes.model.Lecture;
+import com.github.rkhusainov.recyclermultipletypes.data.model.Lecture;
 
 import java.util.ArrayList;
 import java.util.List;

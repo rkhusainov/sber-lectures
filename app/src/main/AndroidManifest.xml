@@ -14,7 +14,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.CourseActivity">
+        <activity android:name=".presentation.view.CourseActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -1,8 +1,8 @@
-package com.github.rkhusainov.recyclermultipletypes.ui;
+package com.github.rkhusainov.recyclermultipletypes.presentation.view;
 
 import androidx.fragment.app.Fragment;
 
-import com.github.rkhusainov.recyclermultipletypes.common.SingleFragmentActivity;
+import com.github.rkhusainov.recyclermultipletypes.presentation.common.SingleFragmentActivity;
 
 public class CourseActivity extends SingleFragmentActivity {
 

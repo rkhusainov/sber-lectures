@@ -1,4 +1,4 @@
-package com.github.rkhusainov.recyclermultipletypes.common;
+package com.github.rkhusainov.recyclermultipletypes.presentation.common;
 
 import android.os.Bundle;
 

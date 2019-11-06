@@ -1,4 +1,4 @@
-package com.github.rkhusainov.recyclermultipletypes.ui;
+package com.github.rkhusainov.recyclermultipletypes.presentation.view;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,7 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.github.rkhusainov.recyclermultipletypes.R;
-import com.github.rkhusainov.recyclermultipletypes.model.Lecture;
+import com.github.rkhusainov.recyclermultipletypes.data.model.Lecture;
 
 import java.util.List;
 

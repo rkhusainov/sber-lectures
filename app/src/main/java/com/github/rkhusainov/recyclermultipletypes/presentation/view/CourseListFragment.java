@@ -1,4 +1,4 @@
-package com.github.rkhusainov.recyclermultipletypes.ui;
+package com.github.rkhusainov.recyclermultipletypes.presentation.view;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,7 +16,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.rkhusainov.recyclermultipletypes.R;
-import com.github.rkhusainov.recyclermultipletypes.model.Lecture;
+import com.github.rkhusainov.recyclermultipletypes.data.repository.CourseListProvider;
+import com.github.rkhusainov.recyclermultipletypes.data.model.Lecture;
+import com.github.rkhusainov.recyclermultipletypes.presentation.presenter.CoursePresenter;
 
 import java.util.ArrayList;
 import java.util.Collections;

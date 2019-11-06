@@ -1,4 +1,4 @@
-package com.github.rkhusainov.recyclermultipletypes.ui;
+package com.github.rkhusainov.recyclermultipletypes.presentation.view;
 
 import android.view.LayoutInflater;
 import android.view.View;

@@ -1,8 +1,10 @@
-package com.github.rkhusainov.recyclermultipletypes.ui;
+package com.github.rkhusainov.recyclermultipletypes.presentation.presenter;
 
 import android.os.AsyncTask;
 
-import com.github.rkhusainov.recyclermultipletypes.model.Lecture;
+import com.github.rkhusainov.recyclermultipletypes.data.repository.CourseListProvider;
+import com.github.rkhusainov.recyclermultipletypes.data.model.Lecture;
+import com.github.rkhusainov.recyclermultipletypes.presentation.view.CourseView;
 
 import java.util.List;
 

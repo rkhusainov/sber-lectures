@@ -1,4 +1,4 @@
-package com.github.rkhusainov.recyclermultipletypes.model;
+package com.github.rkhusainov.recyclermultipletypes.data.model;
 
 import androidx.annotation.NonNull;
 

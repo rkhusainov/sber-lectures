@@ -1,6 +1,5 @@
 package com.github.rkhusainov.recyclermultipletypes.ui;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,13 +18,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.rkhusainov.recyclermultipletypes.R;
 import com.github.rkhusainov.recyclermultipletypes.model.Lecture;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-public class CourseListFragment extends Fragment implements OnItemClickListener{
+public class CourseListFragment extends Fragment implements OnItemClickListener, CourseView {
 
     public static final int POSITION_ALL = 0;
     private static final int NON_GROUP = 0, GROUP = 1;
@@ -41,8 +38,8 @@ public class CourseListFragment extends Fragment implements OnItemClickListener{
     private int mLectorPosition;
     private int mWeekGroupStatus;
 
-    private LoadLecturesTask mLoadLecturesTask;
     private View mLoadingView;
+    private CoursePresenter mPresenter;
 
     public static CourseListFragment newInstance() {
         return new CourseListFragment();
@@ -72,10 +69,10 @@ public class CourseListFragment extends Fragment implements OnItemClickListener{
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
         List<Lecture> lectures = mCourseListProvider.getLectures();
         if (lectures == null) {
-            mLoadLecturesTask = new LoadLecturesTask(this, savedInstanceState == null);
-            mLoadLecturesTask.execute();
+            mPresenter = new CoursePresenter(mCourseListProvider, this, savedInstanceState == null);
         } else {
             initRecyclerView(savedInstanceState == null, lectures);
             initLectorsSpinner();
@@ -83,7 +80,12 @@ public class CourseListFragment extends Fragment implements OnItemClickListener{
         }
     }
 
-     private void initRecyclerView(boolean isFirstCreate, @NonNull List<Lecture> lectures) {
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    private void initRecyclerView(boolean isFirstCreate, @NonNull List<Lecture> lectures) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
         mCourseAdapter = new CourseAdapter(getResources(), this);
@@ -118,7 +120,6 @@ public class CourseListFragment extends Fragment implements OnItemClickListener{
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-
             }
         });
     }
@@ -170,44 +171,21 @@ public class CourseListFragment extends Fragment implements OnItemClickListener{
                 .commit();
     }
 
-    private static class LoadLecturesTask extends AsyncTask<Void, Void, List<Lecture>> {
-        private WeakReference<CourseListFragment> mFragmentWeakReference;
-        CourseListProvider mProvider;
-        private final boolean mIsFirstCreate;
+    @Override
+    public void showProgress() {
+        mLoadingView.setVisibility(View.VISIBLE);
+    }
 
-        private LoadLecturesTask(@NonNull CourseListFragment fragment, boolean isFirstCreate) {
-            mFragmentWeakReference = new WeakReference<>(fragment);
-            mProvider = fragment.mCourseListProvider;
-            mIsFirstCreate = isFirstCreate;
-        }
+    @Override
+    public void hideProgress() {
+        mLoadingView.setVisibility(View.GONE);
+    }
 
-        @Override
-        protected void onPreExecute() {
-            CourseListFragment fragment = mFragmentWeakReference.get();
-            if (fragment != null) {
-                fragment.mLoadingView.setVisibility(View.VISIBLE);
-            }
-        }
-
-        @Override
-        protected List<Lecture> doInBackground(Void... voids) {
-            return mProvider.loadLecturesFromWeb();
-        }
-
-        @Override
-        protected void onPostExecute(List<Lecture> lectures) {
-            CourseListFragment fragment = mFragmentWeakReference.get();
-            if (fragment == null) {
-                return;
-            }
-            fragment.mLoadingView.setVisibility(View.GONE);
-            if (lectures == null) {
-
-            } else {
-                fragment.initRecyclerView(mIsFirstCreate,lectures);
-                fragment.initLectorsSpinner();
-                fragment.initWeekSpinner();
-            }
-        }
+    @Override
+    public void showData(List<Lecture> lectures, boolean isFirstCreate) {
+        initRecyclerView(isFirstCreate, lectures);
+        initLectorsSpinner();
+        initWeekSpinner();
+        mCourseAdapter.setLectures(lectures);
     }
 }

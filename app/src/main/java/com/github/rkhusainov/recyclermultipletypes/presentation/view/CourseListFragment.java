@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-public class CourseListFragment extends Fragment implements OnItemClickListener, CourseView {
+public class CourseListFragment extends Fragment implements OnItemClickListener, ICourseView {
 
     public static final int POSITION_ALL = 0;
     private static final int NON_GROUP = 0, GROUP = 1;
@@ -48,7 +48,7 @@ public class CourseListFragment extends Fragment implements OnItemClickListener,
     }
 
     {
-        // нужно для того, чтобы инстанс LecturesProvider не убивался после смены конфигурации
+        // нужно для того, чтобы инстанс LecturesRepository не убивался после смены конфигурации
         setRetainInstance(true);
     }
 

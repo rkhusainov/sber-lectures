@@ -4,7 +4,7 @@ import com.github.rkhusainov.recyclermultipletypes.data.model.Lecture;
 
 import java.util.List;
 
-public interface CourseView {
+public interface ICourseView {
     void showProgress();
 
     void hideProgress();

@@ -95,25 +95,25 @@ public class LecturesRepository {
         return null;
     }
 
-    public void loadDataAsync(LecturesRepository repository, ICourseView courseView, boolean isFirstCreate) {
-        LoadLecturesTask loadLecturesTask = new LoadLecturesTask(repository, courseView, isFirstCreate);
+    public void loadDataAsync(ICourseView courseView, boolean isFirstCreate) {
+        LoadLecturesTask loadLecturesTask = new LoadLecturesTask(this, courseView, isFirstCreate);
         loadLecturesTask.execute();
     }
 
     private static class LoadLecturesTask extends AsyncTask<Void, Void, List<Lecture>> {
         private LecturesRepository mRepository;
-        private ICourseView mICourseView;
+        private ICourseView mCourseView;
         private final boolean mIsFirstCreate;
 
         private LoadLecturesTask(LecturesRepository repository, ICourseView courseView, boolean isFirstCreate) {
             mRepository = repository;
-            mICourseView = courseView;
+            mCourseView = courseView;
             mIsFirstCreate = isFirstCreate;
         }
 
         @Override
         protected void onPreExecute() {
-            mICourseView.showProgress();
+            mCourseView.showProgress();
         }
 
         @Override
@@ -123,8 +123,8 @@ public class LecturesRepository {
 
         @Override
         protected void onPostExecute(List<Lecture> lectures) {
-            mICourseView.hideProgress();
-            mICourseView.showData(lectures, mIsFirstCreate);
+            mCourseView.hideProgress();
+            mCourseView.showData(lectures, mIsFirstCreate);
         }
     }
 }

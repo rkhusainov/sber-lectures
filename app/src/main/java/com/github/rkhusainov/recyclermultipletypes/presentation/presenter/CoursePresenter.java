@@ -6,16 +6,27 @@ import com.github.rkhusainov.recyclermultipletypes.presentation.view.ICourseView
 public class CoursePresenter {
 
     private LecturesRepository mRepository;
-    private ICourseView mICourseView;
+    private ICourseView mCourseView;
     private boolean mIsFirstCreate;
 
-    public CoursePresenter(LecturesRepository repository, ICourseView ICourseView, boolean isFirstCreate) {
+    public CoursePresenter(LecturesRepository repository, ICourseView courseView, boolean isFirstCreate) {
         mRepository = repository;
-        mICourseView = ICourseView;
+        mCourseView = courseView;
         mIsFirstCreate = isFirstCreate;
     }
 
+    /**
+     * Метод для получения данных в синхронном режиме.
+     */
+    // Данный метод нужен исключительно для понимания работы Unit-тестов.
+    public void loadDataSync() {
+        mRepository.loadLecturesFromWeb();
+    }
+
+    /**
+     * Метод для загрузки данных в ассинхронном режиме.
+     */
     public void loadDataAsync() {
-        mRepository.loadDataAsync(mRepository,mICourseView,mIsFirstCreate);
+        mRepository.loadDataAsync(mCourseView,mIsFirstCreate);
     }
 }

@@ -16,8 +16,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.rkhusainov.recyclermultipletypes.R;
-import com.github.rkhusainov.recyclermultipletypes.data.repository.LecturesRepository;
 import com.github.rkhusainov.recyclermultipletypes.data.model.Lecture;
+import com.github.rkhusainov.recyclermultipletypes.data.repository.LecturesRepository;
 import com.github.rkhusainov.recyclermultipletypes.presentation.presenter.CoursePresenter;
 
 import java.util.ArrayList;
@@ -85,6 +85,7 @@ public class CourseListFragment extends Fragment implements OnItemClickListener,
     @Override
     public void onStart() {
         super.onStart();
+        mPresenter.loadDataAsync();
     }
 
     private void initRecyclerView(boolean isFirstCreate, @NonNull List<Lecture> lectures) {
@@ -142,7 +143,6 @@ public class CourseListFragment extends Fragment implements OnItemClickListener,
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-
             }
         });
     }

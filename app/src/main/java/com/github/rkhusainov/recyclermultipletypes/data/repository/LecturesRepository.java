@@ -1,10 +1,13 @@
 package com.github.rkhusainov.recyclermultipletypes.data.repository;
 
+import android.os.AsyncTask;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.rkhusainov.recyclermultipletypes.data.model.Lecture;
+import com.github.rkhusainov.recyclermultipletypes.presentation.view.ICourseView;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,7 +28,6 @@ import static com.github.rkhusainov.recyclermultipletypes.BuildConfig.API_URL;
 public class LecturesRepository {
 
     public static final String DATE_FORMAT = "dd.MM.yyyy";
-
     public List<Lecture> mLectures;
 
     public List<Lecture> getLectures() {
@@ -91,5 +93,38 @@ public class LecturesRepository {
             }
         }
         return null;
+    }
+
+    public void loadDataAsync(LecturesRepository repository, ICourseView courseView, boolean isFirstCreate) {
+        LoadLecturesTask loadLecturesTask = new LoadLecturesTask(repository, courseView, isFirstCreate);
+        loadLecturesTask.execute();
+    }
+
+    private static class LoadLecturesTask extends AsyncTask<Void, Void, List<Lecture>> {
+        private LecturesRepository mRepository;
+        private ICourseView mICourseView;
+        private final boolean mIsFirstCreate;
+
+        private LoadLecturesTask(LecturesRepository repository, ICourseView courseView, boolean isFirstCreate) {
+            mRepository = repository;
+            mICourseView = courseView;
+            mIsFirstCreate = isFirstCreate;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            mICourseView.showProgress();
+        }
+
+        @Override
+        protected List<Lecture> doInBackground(Void... voids) {
+            return mRepository.loadLecturesFromWeb();
+        }
+
+        @Override
+        protected void onPostExecute(List<Lecture> lectures) {
+            mICourseView.hideProgress();
+            mICourseView.showData(lectures, mIsFirstCreate);
+        }
     }
 }

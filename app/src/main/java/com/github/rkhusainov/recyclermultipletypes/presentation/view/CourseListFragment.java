@@ -40,8 +40,9 @@ public class CourseListFragment extends Fragment implements OnItemClickListener,
     private int mLectorPosition;
     private int mWeekGroupStatus;
 
-    private View mLoadingView;
     private CoursePresenter mPresenter;
+    private View mLoadingView;
+    private boolean mIsFirstCreate;
 
     public static CourseListFragment newInstance() {
         return new CourseListFragment();
@@ -66,20 +67,12 @@ public class CourseListFragment extends Fragment implements OnItemClickListener,
         mRecyclerView = view.findViewById(R.id.recycler);
         mLectorSpinner = view.findViewById(R.id.lectors_spinner);
         mWeekSpinner = view.findViewById(R.id.week_group_spinner);
+        mIsFirstCreate = savedInstanceState == null;
+        providePresenter();
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        List<Lecture> lectures = mLecturesRepository.getLectures();
-        if (lectures == null) {
-            mPresenter = new CoursePresenter(mLecturesRepository, this, savedInstanceState == null);
-        } else {
-            initRecyclerView(savedInstanceState == null, lectures);
-            initLectorsSpinner();
-            initWeekSpinner();
-        }
+    private void providePresenter() {
+        mPresenter = new CoursePresenter(mLecturesRepository, this);
     }
 
     @Override
@@ -88,7 +81,7 @@ public class CourseListFragment extends Fragment implements OnItemClickListener,
         mPresenter.loadDataAsync();
     }
 
-    private void initRecyclerView(boolean isFirstCreate, @NonNull List<Lecture> lectures) {
+    private void initRecyclerView(@NonNull List<Lecture> lectures, boolean isFirstCreate) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
         mCourseAdapter = new CourseAdapter(getResources(), this);
@@ -184,8 +177,8 @@ public class CourseListFragment extends Fragment implements OnItemClickListener,
     }
 
     @Override
-    public void showData(List<Lecture> lectures, boolean isFirstCreate) {
-        initRecyclerView(isFirstCreate, lectures);
+    public void showData(List<Lecture> lectures) {
+        initRecyclerView(lectures,mIsFirstCreate);
         initLectorsSpinner();
         initWeekSpinner();
         mCourseAdapter.setLectures(lectures);

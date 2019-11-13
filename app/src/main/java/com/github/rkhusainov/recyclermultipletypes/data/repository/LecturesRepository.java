@@ -7,7 +7,6 @@ import androidx.annotation.Nullable;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.rkhusainov.recyclermultipletypes.data.model.Lecture;
-import com.github.rkhusainov.recyclermultipletypes.presentation.view.ICourseView;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -95,36 +94,34 @@ public class LecturesRepository {
         return null;
     }
 
-    public void loadDataAsync(ICourseView courseView, boolean isFirstCreate) {
-        LoadLecturesTask loadLecturesTask = new LoadLecturesTask(this, courseView, isFirstCreate);
+    public void loadDataAsync(OnLoadFinishListener onLoadFinishListener) {
+        LoadLecturesTask loadLecturesTask = new LoadLecturesTask(onLoadFinishListener);
         loadLecturesTask.execute();
     }
 
-    private static class LoadLecturesTask extends AsyncTask<Void, Void, List<Lecture>> {
-        private LecturesRepository mRepository;
-        private ICourseView mCourseView;
-        private final boolean mIsFirstCreate;
+    private class LoadLecturesTask extends AsyncTask<Void, Void, List<Lecture>> {
+        private OnLoadFinishListener mOnLoadFinishListener;
 
-        private LoadLecturesTask(LecturesRepository repository, ICourseView courseView, boolean isFirstCreate) {
-            mRepository = repository;
-            mCourseView = courseView;
-            mIsFirstCreate = isFirstCreate;
+        private LoadLecturesTask(OnLoadFinishListener onLoadFinishListener) {
+            mOnLoadFinishListener = onLoadFinishListener;
         }
 
         @Override
         protected void onPreExecute() {
-            mCourseView.showProgress();
         }
 
         @Override
         protected List<Lecture> doInBackground(Void... voids) {
-            return mRepository.loadLecturesFromWeb();
+            return loadLecturesFromWeb();
         }
 
         @Override
         protected void onPostExecute(List<Lecture> lectures) {
-            mCourseView.hideProgress();
-            mCourseView.showData(lectures, mIsFirstCreate);
+            mOnLoadFinishListener.onFinish(lectures);
         }
+    }
+
+    public interface OnLoadFinishListener {
+        void onFinish(List<Lecture> lectures);
     }
 }

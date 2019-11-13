@@ -1,18 +1,19 @@
 package com.github.rkhusainov.recyclermultipletypes.presentation.presenter;
 
+import com.github.rkhusainov.recyclermultipletypes.data.model.Lecture;
 import com.github.rkhusainov.recyclermultipletypes.data.repository.LecturesRepository;
 import com.github.rkhusainov.recyclermultipletypes.presentation.view.ICourseView;
+
+import java.util.List;
 
 public class CoursePresenter {
 
     private LecturesRepository mRepository;
     private ICourseView mCourseView;
-    private boolean mIsFirstCreate;
 
-    public CoursePresenter(LecturesRepository repository, ICourseView courseView, boolean isFirstCreate) {
+    public CoursePresenter(LecturesRepository repository, ICourseView courseView) {
         mRepository = repository;
         mCourseView = courseView;
-        mIsFirstCreate = isFirstCreate;
     }
 
     /**
@@ -27,6 +28,17 @@ public class CoursePresenter {
      * Метод для загрузки данных в ассинхронном режиме.
      */
     public void loadDataAsync() {
-        mRepository.loadDataAsync(mCourseView,mIsFirstCreate);
+
+        mCourseView.showProgress();
+
+        LecturesRepository.OnLoadFinishListener onLoadFinishListener = new LecturesRepository.OnLoadFinishListener() {
+            @Override
+            public void onFinish(List<Lecture> lectures) {
+                mCourseView.showData(lectures);
+                mCourseView.hideProgress();
+            }
+        };
+
+        mRepository.loadDataAsync(onLoadFinishListener);
     }
 }

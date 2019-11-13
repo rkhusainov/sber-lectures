@@ -9,5 +9,5 @@ public interface ICourseView {
 
     void hideProgress();
 
-    void showData(List<Lecture> lectures, boolean isFirstCreate);
+    void showData(List<Lecture> lectures);
 }

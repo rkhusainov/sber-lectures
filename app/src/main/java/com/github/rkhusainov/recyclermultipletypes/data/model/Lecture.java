@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Lecture implements Serializable {
     private final int mNumber;
@@ -28,6 +29,23 @@ public class Lecture implements Serializable {
         mTheme = theme;
         mLector = lector;
         mSubtopics = new ArrayList<>(subtopics);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Lecture lecture = (Lecture) o;
+        return mNumber == lecture.mNumber &&
+                Objects.equals(mDate, lecture.mDate) &&
+                Objects.equals(mTheme, lecture.mTheme) &&
+                Objects.equals(mLector, lecture.mLector) &&
+                Objects.equals(mSubtopics, lecture.mSubtopics);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(mNumber, mDate, mTheme, mLector, mSubtopics);
     }
 
     public int getNumber() {

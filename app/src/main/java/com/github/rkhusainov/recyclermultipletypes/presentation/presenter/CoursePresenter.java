@@ -21,7 +21,10 @@ public class CoursePresenter {
      */
     // Данный метод нужен исключительно для понимания работы Unit-тестов.
     public void loadDataSync() {
-        mRepository.loadLecturesFromWeb();
+        mCourseView.showProgress();
+        List<Lecture> lectures = mRepository.loadLecturesFromWeb();
+        mCourseView.showData(lectures);
+        mCourseView.hideProgress();
     }
 
     /**

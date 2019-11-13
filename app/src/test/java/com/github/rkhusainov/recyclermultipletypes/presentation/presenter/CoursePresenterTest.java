@@ -33,7 +33,7 @@ public class CoursePresenterTest {
 
     @Before
     public void setUp() {
-        mPresenter = new CoursePresenter(mRepository, mICourseView, true);
+        mPresenter = new CoursePresenter(mRepository, mICourseView);
     }
 
     @Test
@@ -44,7 +44,7 @@ public class CoursePresenterTest {
 
         //Проверка, что презентер действительно вызывает методы представления
         verify(mICourseView).showProgress();
-        verify(mICourseView).showData(createTestData(),true);
+        verify(mICourseView).showData(createTestData());
         verify(mICourseView).hideProgress();
     }
 
@@ -58,8 +58,8 @@ public class CoursePresenterTest {
 
         //Проверка, что презентер действительно вызывает методы представления
         inOrder.verify(mICourseView).showProgress();
+        inOrder.verify(mICourseView).showData(createTestData());
         inOrder.verify(mICourseView).hideProgress();
-        inOrder.verify(mICourseView).showData(createTestData(),true);
 
         inOrder.verifyNoMoreInteractions();
     }
@@ -68,19 +68,25 @@ public class CoursePresenterTest {
     public void testLoadDataAsync() {
         Mockito.doAnswer(new Answer() {
             @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                createTestData();
+            public Object answer(InvocationOnMock invocation) {
+                //получаем слушателя из метода loadDataAsync()
+                LecturesRepository.OnLoadFinishListener onLoadFinishListener =
+                        (LecturesRepository.OnLoadFinishListener) invocation.getArguments()[0];
+
+                //кидаем в него ответы
+                onLoadFinishListener.onFinish(createTestData());
                 return null;
             }
-        }).when(mRepository).loadDataAsync(mICourseView, true);
+        }).when(mRepository).loadDataAsync(Mockito.any(LecturesRepository.OnLoadFinishListener.class));
 
         mPresenter.loadDataAsync();
 
         InOrder inOrder = Mockito.inOrder(mICourseView);
         inOrder.verify(mICourseView).showProgress();
-        inOrder.verify(mICourseView).showData(createTestData(), true);
+        inOrder.verify(mICourseView).showData(createTestData());
         inOrder.verify(mICourseView).hideProgress();
 
+        inOrder.verifyNoMoreInteractions();
     }
 
     private List<Lecture> createTestData() {

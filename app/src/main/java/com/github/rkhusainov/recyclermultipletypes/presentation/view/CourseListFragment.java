@@ -181,6 +181,5 @@ public class CourseListFragment extends Fragment implements OnItemClickListener,
         initRecyclerView(lectures,mIsFirstCreate);
         initLectorsSpinner();
         initWeekSpinner();
-        mCourseAdapter.setLectures(lectures);
     }
 }

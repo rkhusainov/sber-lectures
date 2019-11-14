@@ -4,6 +4,7 @@ import com.github.rkhusainov.recyclermultipletypes.data.model.Lecture;
 import com.github.rkhusainov.recyclermultipletypes.data.repository.LecturesRepository;
 import com.github.rkhusainov.recyclermultipletypes.presentation.view.ICourseView;
 
+import java.util.Date;
 import java.util.List;
 
 public class CoursePresenter {
@@ -44,4 +45,21 @@ public class CoursePresenter {
 
         mRepository.loadDataAsync(onLoadFinishListener);
     }
+
+    public List<String> getLectors() {
+        return mRepository.provideLectors();
+    }
+
+    public List<Lecture> getLectures() {
+        return mRepository.getLectures();
+    }
+
+    public List<Lecture> getLecturesByFilter(String lectorName) {
+        return mRepository.lectureFilterBy(lectorName);
+    }
+
+    public Lecture getLectureByDate(Date date) {
+        return mRepository.getLectureByDate(date);
+    }
+
 }
